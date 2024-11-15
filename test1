@@ -1,0 +1,25 @@
+from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
+import json
+import time
+
+# Initialize the AWS IoT MQTT Client
+client = AWSIoTMQTTClient("Smart_bus_transportation")  # Replace with your Thing name
+client.configureEndpoint("a2jsx9uhuycxqp-ats.iot.eu-north-1.amazonaws.com", 8883)  # Replace YOUR_ENDPOINT with the endpoint from AWS IoT
+client.configureCredentials(
+    "AmazonRootCA1.pem",
+    "proj-private.pem.key",
+    "proj-certificate.pem.crt"
+)
+
+# Connect to AWS IoT
+client.connect()
+print("Connected to AWS IoT")
+
+# Publish data
+while True:
+    temperature = 20 + (5 * (time.time() % 10) / 10)  # Simulated temperature
+    humidity = 40 + (20 * (time.time() % 10) / 10)     # Simulated humidity
+    data = {"temperature": temperature, "humidity": humidity}
+    client.publish("sensor/data", json.dumps(data), 1)
+    print(f"Published: {data}")
+    time.sleep(5)  # Publish every 5 seconds
